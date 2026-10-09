@@ -166,13 +166,20 @@ if [[ -n "${HOMEBREW_ON_MACOS-}" ]]
 then
   UNAME_MACHINE="$(/usr/bin/uname -m)"
 
-  # On macOS, support Apple Silicon only
-  if [[ "${UNAME_MACHINE}" != "arm64" ]]
+  # MODIFIED: allow Intel (x86_64) as well as Apple Silicon (arm64)
+  if [[ "${UNAME_MACHINE}" != "arm64" && "${UNAME_MACHINE}" != "x86_64" ]]
   then
-    abort "Homebrew on macOS is only supported on Apple Silicon processors!"
+    abort "Homebrew on macOS requires an Intel or Apple Silicon processor."
   fi
 
-  HOMEBREW_PREFIX_DEFAULT="/opt/homebrew"
+  # MODIFIED: use the correct default prefix for each architecture
+  if [[ "${UNAME_MACHINE}" == "arm64" ]]
+  then
+    HOMEBREW_PREFIX_DEFAULT="/opt/homebrew"
+  else
+    HOMEBREW_PREFIX_DEFAULT="/usr/local"
+  fi
+
   HOMEBREW_CACHE="${HOME}/Library/Caches/Homebrew"
 
   STAT_PRINTF=("/usr/bin/stat" "-f")
@@ -596,7 +603,8 @@ then
 fi
 
 # Create the system PATH entry only when it can be managed.
-if [[ -d /etc/paths.d && "${HOMEBREW_PREFIX}" == /opt/homebrew ]] && have_sudo_access
+# MODIFIED: removed the /opt/homebrew-only condition so Intel paths also work.
+if [[ -d /etc/paths.d ]] && have_sudo_access
 then
   ADD_PATHS_D=1
 fi
