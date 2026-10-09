@@ -1,6 +1,6 @@
 # Homebrew (un)installer
 
-## Install Homebrew (on macOS or Linux)
+## Install Homebrew (on macOS (Intel & Arm64) or Linux)
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/DanielM4tveev/install/refs/heads/main/install.sh)"
